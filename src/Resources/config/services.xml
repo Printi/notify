@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+
+        <parameter key="notify.transition.send_to_prepress">high</parameter>
+        <parameter key="notify.transition.prepress_reject">low</parameter>
+        <parameter key="notify.transition.prepress_reject_failed">high</parameter>
+        <parameter key="notify.transition.prepress_approve">high</parameter>
+        <parameter key="notify.transition.send_to_production">high</parameter>
+        <parameter key="notify.transition.waiting_for_upload">high</parameter>
+        <parameter key="notify.transition.new_upload">low</parameter>
+        <parameter key="notify.transition.cancel">high</parameter>
+        <parameter key="notify.transition.finish">high</parameter>
+
+        <parameter key="notify" type="collection">
+            <parameter key="transition" type="collection">
+                <parameter key="send_to_prepress">%notify.transition.send_to_prepress%</parameter>
+                <parameter key="prepress_reject">%notify.transition.prepress_reject%</parameter>
+                <parameter key="prepress_reject_failed">%notify.transition.prepress_reject_failed%</parameter>
+                <parameter key="prepress_approve">%notify.transition.prepress_approve%</parameter>
+                <parameter key="send_to_production">%notify.transition.send_to_production%</parameter>
+                <parameter key="waiting_for_upload">%notify.transition.waiting_for_upload%</parameter>
+                <parameter key="new_upload">%notify.transition.new_upload%</parameter>
+                <parameter key="cancel">%notify.transition.cancel%</parameter>
+                <parameter key="finish">%notify.transition.finish%</parameter>
+            </parameter>
+        </parameter>
+
+    </parameters>
+
+    <services>
+
+        <defaults autowire="true" autoconfigure="true" public="false" />
+
+        <service id="notify.service" class="Printi\NotifyBundle\Notify">
+            <argument>%notify%</argument>
+        </service>
+
+        <service id="Printi\NotifyBundle\Notify" alias="notify.service" />
+
+    </services>
+</container>
