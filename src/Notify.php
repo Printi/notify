@@ -3,7 +3,7 @@
 namespace Printi\NotifyBundle;
 
 use ApiClient\Clients\AdminApi;
-use App\Services\Aws\OmegaSnsClient;
+use Printi\AwsBundle\Services\Sns\Sns;
 use Printi\NotifyBundle\Exception\NotifyException;
 
 /**
@@ -24,18 +24,13 @@ class Notify extends BaseNotify
     ];
 
     const SNS_TOPIC = [
-        self::TRANSITION => 'alpha-message',
+        self::TRANSITION => 'alpha_message',
     ];
 
-    /**
-     * Notify constructor.
-     *
-     * @param array          $config         The Priority config
-     * @param OmegaSnsClient $omegaSnsClient The OmegaSnsClient
-     */
-    public function __construct(array $config, OmegaSnsClient $omegaSnsClient)
+
+    public function __construct(array $config, Sns $sns)
     {
-        parent::__construct($config, $omegaSnsClient);
+        parent::__construct($config, $sns);
     }
 
     /**
@@ -91,7 +86,7 @@ class Notify extends BaseNotify
     public function notifyToAws(string $key, array $body)
     {
         try {
-            $this->omegaSnsClient->publish(self::SNS_TOPIC[$key], $body);
+            $this->sns->publish(self::SNS_TOPIC[$key], $body);
         } catch (\Exception $e) {
             throw $e;
         }

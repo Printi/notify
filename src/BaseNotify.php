@@ -2,25 +2,25 @@
 
 namespace Printi\NotifyBundle;
 
-use App\Services\Aws\OmegaSnsClient;
+use Printi\AwsBundle\Services\Sns\Sns;
 
 class BaseNotify
 {
     /** @var array $config */
     protected $config;
 
-    /** @var  OmegaSnsClient $omegaSnsClient */
-    protected $omegaSnsClient;
+    /** @var Sns $sns */
+    protected $sns;
 
-    /**
-     * BaseNotify constructor.
-     *
-     * @param array          $config
-     * @param OmegaSnsClient $omegaSnsClient
-     */
-    public function __construct(array $config, OmegaSnsClient $omegaSnsClient)
+
+    public function __construct(array $config, Sns $sns)
     {
-        $this->config         = $config ;
-        $this->omegaSnsClient = $omegaSnsClient;
+        $this->config = $config;
+        $this->sns    = $sns;
+    }
+
+    public function publishAwsSns(string $topic, array $message = [])
+    {
+
     }
 }

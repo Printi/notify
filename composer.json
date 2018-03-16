@@ -1,6 +1,5 @@
 {
-  "name": "printi/notify",
-  "vendor/package": "1.0.0",
+  "name": "tanujdave/notify",
   "type": "symfony-bundle",
   "description": "Notify is messaging service for Omega2. which responsible for sending message to Alpha or AWS sns based on priority.",
   "keywords": ["messaging", "notify", "transition", "api"],
@@ -22,6 +21,6 @@
     "php": "^7.0",
     "symfony/framework-bundle": "^3.3",
     "printi/api-client": "1.*",
-    "aws/aws-sdk-php-symfony": "^2.0"
+    "tanujdave/aws": "1.*"
   }
 }
