@@ -10,7 +10,7 @@
 
         <service id="notify.service" class="Printi\NotifyBundle\Notify">
             <argument>%notify%</argument>
-            <argument type="service" id="printi.aws.sns" />
+            <argument type="service" id="printi.aws.sqs" />
         </service>
 
         <service id="Printi\NotifyBundle\Notify" alias="notify.service" />

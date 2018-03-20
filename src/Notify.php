@@ -3,8 +3,9 @@
 namespace Printi\NotifyBundle;
 
 use ApiClient\Clients\AdminApi;
-use Printi\AwsBundle\Services\Sns\Sns;
+use Printi\AwsBundle\Services\Sqs\Sqs;
 use Printi\NotifyBundle\Exception\NotifyException;
+use Psr\Log\InvalidArgumentException;
 
 /**
  * Class Notify
@@ -15,78 +16,78 @@ class Notify extends BaseNotify
     const TRANSITION = 'transition';
 
     const PRIORITY_METHOD = [
-        'low'  => 'Alpha',
-        'high' => 'Aws',
+        'alpha' => [
+            'low'  => 'rest',
+            'high' => 'aws',
+        ],
     ];
 
-    const ACTION_METHOD = [
-        self::TRANSITION => 'Transition',
-    ];
-
-    const SNS_TOPIC = [
-        self::TRANSITION => 'alpha_message',
-    ];
-
-
-    public function __construct(array $config, Sns $sns)
+    public function __construct(array $config, Sqs $sqs)
     {
-        parent::__construct($config, $sns);
+        parent::__construct($config, $sqs);
     }
 
-    /**
-     * Notify to Alpha|Aws on Omega transition
-     *
-     * @param string $transition The transition name
-     * @param array  $body       The message body
-     *
-     * @throws \Exception
-     */
-    public function notifyOnTransition(string $transition, array $body)
+    public function sendMessage(string $to, array $payload)
     {
+        if (!isset($payload['data']) || !isset($payload['type'])) {
+            throw new InvalidArgumentException();
+        }
+
         try {
-            $priority = $this->getNotificationPriority(self::TRANSITION, $transition);
 
-            $methodMask = "notifyTo%s";
-            $method     = sprintf($methodMask, ucfirst(self::PRIORITY_METHOD[$priority]));
+            switch ($payload['type']) {
+                case "stateTransition":
+                    if (!isset($payload['data']['transition'])) {
+                        throw new InvalidArgumentException();
+                    }
+                    $priority = $this->getNotificationPriority(self::TRANSITION, $payload['data']['transition']);
+                    $methodMask = "%sNotify";
+                    $method     = sprintf($methodMask, ucfirst(self::PRIORITY_METHOD[$to][$priority]));
 
-            $this->{$method}(self::TRANSITION, $body);
+                    $this->{$method}($to, $payload);
+                    break;
+            }
+
         } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Notify to Alpha
-     *
-     * @param string $key  The action key
+     * @param string $to   The service name
      * @param array  $body The message body
      *
      * @throws \Exception
      */
-    public function notifyToAlpha(string $key, array $body)
+    public function restNotify(string $to, array $body)
     {
         try {
-            $methodMask = "notifyOn%s";
-            $method     = sprintf($methodMask, ucfirst(self::ACTION_METHOD[$key]));
 
-            AdminApi::getInstance()->{$method}($body);
+            switch ($to) {
+                case 'alpha':
+                    AdminApi::getInstance()->sendNotification($body);
+                    break;
+            }
+
         } catch (\Exception $e) {
             throw $e;
         }
     }
 
     /**
-     * Notify to Aws Sns
-     *
-     * @param string $key  The action key
-     * @param array  $body The message body
+     * @param string $to
+     * @param array  $body
      *
      * @throws \Exception
      */
-    public function notifyToAws(string $key, array $body)
+    public function awsNotify(string $to, array $body)
     {
         try {
-            $this->sns->publish(self::SNS_TOPIC[$key], $body);
+            switch ($to) {
+                case 'alpha':
+                    $this->sqs->send('alpha_message', $body);
+                    break;
+            }
         } catch (\Exception $e) {
             throw $e;
         }

@@ -2,25 +2,20 @@
 
 namespace Printi\NotifyBundle;
 
-use Printi\AwsBundle\Services\Sns\Sns;
+use Printi\AwsBundle\Services\Sqs\Sqs;
 
 class BaseNotify
 {
     /** @var array $config */
     protected $config;
 
-    /** @var Sns $sns */
-    protected $sns;
+    /** @var Sqs $sqs */
+    protected $sqs;
 
 
-    public function __construct(array $config, Sns $sns)
+    public function __construct(array $config, Sqs $sqs)
     {
         $this->config = $config;
-        $this->sns    = $sns;
-    }
-
-    public function publishAwsSns(string $topic, array $message = [])
-    {
-
+        $this->sqs    = $sqs;
     }
 }
