@@ -17,8 +17,8 @@ class Notify extends BaseNotify
 
     const PRIORITY_METHOD = [
         'alpha' => [
-            'low'  => 'rest',
-            'high' => 'aws',
+            'low'  => 'aws',
+            'high' => 'rest',
         ],
     ];
 
