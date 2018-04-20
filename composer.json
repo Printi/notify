@@ -18,9 +18,9 @@
     }
   },
   "require": {
-    "php": "^7.0",
+    "php": "^7.1",
     "symfony/framework-bundle": "^3.3",
     "printi/api-client": "1.*",
-    "printi/aws": "1.*"
+    "printi/aws": "^2.0"
   }
 }
