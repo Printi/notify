@@ -20,7 +20,7 @@
   "require": {
     "php": "^7.1",
     "symfony/framework-bundle": "^3.4",
-    "printi/api-client": "1.*",
+    "printi/api-client": "*",
     "printi/aws": "^2.0"
   }
 }
